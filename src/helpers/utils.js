@@ -21,12 +21,12 @@ const quoteRegex = /"|'/g
 const quotesRegex = /[^\s"']+|"([^"]*)"+|'([^']*)'/gmi
 
 export const parseRawInput = (input = '') => {
-  if (!input) { return [] }
+  if (!input) { return ['', []] }
 
   const [rawCommand, ...rawArgs] = input.split(' ')
   const command = getCommand(rawCommand)
 
-  if (!rawArgs.length) { return [command] }
+  if (!rawArgs.length) { return [command, []] }
 
   const argsStr = rawArgs.join(' ')
   if (!quoteRegex.test(argsStr)) { return [command, rawArgs] }

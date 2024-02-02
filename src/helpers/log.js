@@ -1,4 +1,4 @@
-const logColor = {
+const c = {
   green: '\x1b[32m',
   red: '\x1b[31m',
   blue: '\x1b[34m',
@@ -7,19 +7,22 @@ const logColor = {
   end: '\x1b[0m',
 }
 
-export const PROMPT_MSG = `${logColor.lightGreen}>${logColor.end} `
+export const green = (str) => `${c.green}${str}${c.end}`
+export const red = (str) => `${c.red}${str}${c.end}`
+export const blue = (str) => `${c.blue}${str}${c.end}`
+export const yellow = (str) => `${c.yellow}${str}${c.end}`
+export const lGreen = (str) => `${c.lightGreen}${str}${c.end}`
+
+export const PROMPT_MSG = `${lGreen('>')} `
 
 export const logGreeting = (username) => {
-  const msg = `Welcome to the File Manager, ${logColor.green}${username}${logColor.end}!`
-  console.log(msg)
+  console.log(`Welcome to the File Manager, ${green(username)}!`)
 }
 
 export const logGoodbye = (username) => {
-  const msg = `Thank you for using File Manager, ${logColor.green}${username}${logColor.end}, goodbye!`
-  console.log(msg)
+  console.log(`Thank you for using File Manager, ${green(username)}, goodbye!`)
 }
 
-export const logCurrentWorkingDirectory = (workingDirectoryPath) => {
-  const msg = `You are currently in ${logColor.yellow}${workingDirectoryPath}${logColor.end}`
-  console.log(msg)
+export const logCurrentWorkingDirectory = (path) => {
+  console.log(`You are currently in ${yellow(path)}`)
 }

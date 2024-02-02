@@ -1,12 +1,26 @@
 import { createInterface } from 'node:readline'
 
 import * as h from './helpers/index.js'
+import * as m from './modules/index.js'
 
 export class App {
   constructor (sessionUserName, startDirectory) {
     this.sessionUserName = sessionUserName
     this._cwd = startDirectory
     this._rl = undefined
+  }
+
+  logCwd () {
+    h.logCurrentWorkingDirectory(this._cwd)
+  }
+
+  greeting () {
+    h.logGreeting(this.sessionUserName)
+    this.logCwd()
+  }
+
+  goodbye () {
+    h.logGoodbye(this.sessionUserName)
   }
 
   up (args) {
@@ -45,8 +59,8 @@ export class App {
     console.log('--rm--', args)
   }
 
-  os (args) {
-    console.log('--os--', args)
+  os ([cmd]) {
+    m.logSystemInfo(cmd)
   }
 
   hash (args) {
@@ -90,6 +104,7 @@ export class App {
       if (validation.value) {
         try {
           await this[command](args)
+          this.logCwd()
         } catch (err) {
           console.log(err.message)
         }
@@ -113,9 +128,9 @@ export class App {
   }
 
   start () {
-    h.logGreeting(this.sessionUserName)
+    this.greeting()
 
-    process.on('exit', () => h.logGoodbye(this.sessionUserName))
+    process.on('exit', () => this.goodbye())
 
     process.on('error', (err) => console.log(err.message))
 
