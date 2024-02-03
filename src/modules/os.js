@@ -27,37 +27,25 @@ const getArchitecture = () => arch()
 
 const getCpus = () => cpus().map(item => ({ Model: item.model, Rate: item.speed }))
 
-const logEOL = () => {
-  console.log(`System EOL marker: ${h.yellow(JSON.stringify(EOL))}`)
-}
-
-const logHomedir = () => {
-  console.log(`Current user's home directory: ${h.yellow(getHomedir())}`)
-}
-
-const logUsername = () => {
-  console.log(`Current user name: ${h.yellow(getUsername())}`)
-}
-
-const logArchitecture = () => {
-  console.log(`Operating system CPU architecture: ${h.yellow(getArchitecture())}`)
-}
-
-const logCpus = () => {
-  const cpus = getCpus()
-  const formattedCpus = cpus.map(({ Model, Rate }) => ({ Model: Model.trim(), Rate: `${Rate / 1000} GHz` }))
-  console.log(`Overall amount of logical CPU cores: ${h.yellow(cpus.length)}`)
-  console.table(formattedCpus)
-}
-
-const osErrorMessage = `Available commands: ${h.blue('--eol')}, ${h.blue('--cpus')}, ${h.blue('--homedir')}, ${h.blue('--username')}, ${h.blue('--architecture')} (${h.blue('--arch')})`
-
 const processCommand = {
-  eol: logEOL,
-  cpus: logCpus,
-  homedir: logHomedir,
-  username: logUsername,
-  architecture: logArchitecture,
+  eol () {
+    console.log(`System EOL marker: ${h.yellow(JSON.stringify(EOL))}`)
+  },
+  cpus () {
+    const cpus = getCpus()
+    const formattedCpus = cpus.map(({ Model, Rate }) => ({ Model: Model.trim(), Rate: `${Rate / 1000} GHz` }))
+    console.log(`Overall amount of logical CPU cores: ${h.yellow(cpus.length)}`)
+    console.table(formattedCpus)
+  },
+  homedir () {
+    console.log(`Current user's home directory: ${h.yellow(getHomedir())}`)
+  },
+  username () {
+    console.log(`Current user name: ${h.yellow(getUsername())}`)
+  },
+  architecture () {
+    console.log(`Operating system CPU architecture: ${h.yellow(getArchitecture())}`)
+  }
 }
 
 export const logSystemInfo = (command) => {
@@ -65,6 +53,6 @@ export const logSystemInfo = (command) => {
   if (cmd) {
     processCommand[cmd]()
   } else {
-    throw new h.InputError(osErrorMessage)
+    throw new h.InputError(`Available commands: ${h.blue('--eol')}, ${h.blue('--cpus')}, ${h.blue('--homedir')}, ${h.blue('--username')}, ${h.blue('--architecture')} (${h.blue('--arch')})`)
   }
 }

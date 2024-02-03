@@ -4,6 +4,7 @@ const c = {
   blue: '\x1b[34m',
   yellow: '\x1b[33m',
   lightGreen: '\x1b[92m',
+  lightBlue: '\x1b[94m',
   end: '\x1b[0m',
 }
 
@@ -12,8 +13,9 @@ export const red = (str) => `${c.red}${str}${c.end}`
 export const blue = (str) => `${c.blue}${str}${c.end}`
 export const yellow = (str) => `${c.yellow}${str}${c.end}`
 export const lGreen = (str) => `${c.lightGreen}${str}${c.end}`
+export const lBlue = (str) => `${c.lightBlue}${str}${c.end}`
 
-export const PROMPT_MSG = `${lGreen('>')} `
+export const PROMPT_MSG = `${lBlue('>')} `
 
 export const logGreeting = (username) => {
   console.log(`Welcome to the File Manager, ${green(username)}!`)

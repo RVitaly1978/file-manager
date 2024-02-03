@@ -10,29 +10,33 @@ export class App {
     this._rl = undefined
   }
 
-  logCwd () {
-    h.logCurrentWorkingDirectory(this._cwd)
-  }
-
   greeting () {
     h.logGreeting(this.sessionUserName)
-    this.logCwd()
   }
 
   goodbye () {
     h.logGoodbye(this.sessionUserName)
   }
 
-  up (args) {
-    console.log('--up--', args)
+  logCWD () {
+    h.logCurrentWorkingDirectory(this._cwd)
   }
 
-  cd (args) {
-    console.log('--cd--', args)
+  displayPrompt () {
+    this.logCWD()
+    this._rl.prompt()
   }
 
-  ls (args) {
-    console.log('--ls--', args)
+  up () {
+    this._cwd = m.up(this._cwd)
+  }
+
+  async cd ([pathTo]) {
+    this._cwd = await m.cd(this._cwd, pathTo)
+  }
+
+  async ls () {
+    await m.list(this._cwd)
   }
 
   cat (args) {
@@ -104,7 +108,6 @@ export class App {
       if (validation.value) {
         try {
           await this[command](args)
-          this.logCwd()
         } catch (err) {
           console.log(err.message)
         }
@@ -112,7 +115,7 @@ export class App {
         console.log(validation.message)
       }
 
-      this._rl.prompt()
+      this.displayPrompt()
     })
 
     this._rl.on('close', () => {
@@ -124,7 +127,7 @@ export class App {
       process.exit()
     })
 
-    this._rl.prompt()
+    this.displayPrompt()
   }
 
   start () {
