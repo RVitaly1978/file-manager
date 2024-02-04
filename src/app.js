@@ -2,7 +2,7 @@ import { createInterface } from 'node:readline'
 import { logGreeting, logGoodbye, logCWD, parseRawInput, validate, MSG } from './helpers/index.js'
 import {
   changeDirUp, changeDir, listDir, // nwd
-  readFile, addFile, // fs
+  readFile, addFile, renameFile, removeFile, copyFile, moveFile, // fs
   logSystemInfo, // os
 } from './modules/index.js'
 
@@ -34,40 +34,40 @@ export class App {
     this._cwd = changeDirUp(this._cwd)
   }
 
-  async cd ([pathTo]) {
-    this._cwd = await changeDir(this._cwd, pathTo)
+  async cd (args) {
+    this._cwd = await changeDir(this._cwd, ...args)
   }
 
   async ls () {
     await listDir(this._cwd)
   }
 
-  async cat ([pathToFile]) {
-    await readFile(this._cwd, pathToFile)
+  async cat (args) {
+    await readFile(this._cwd, ...args)
   }
 
-  async add ([filename]) {
-    await addFile(this._cwd, filename)
+  async add (args) {
+    await addFile(this._cwd, ...args)
   }
 
-  rn (args) {
-    console.log('--rn--', args)
+  async rn (args) {
+    await renameFile(this._cwd, ...args)
   }
 
-  cp (args) {
-    console.log('--cp--', args)
+  async cp (args) {
+    await copyFile(this._cwd, ...args)
   }
 
-  mv (args) {
-    console.log('--mv--', args)
+  async mv (args) {
+    await moveFile(this._cwd, ...args)
   }
 
-  rm (args) {
-    console.log('--rm--', args)
+  async rm (args) {
+    await removeFile(this._cwd, ...args)
   }
 
-  os ([cmd]) {
-    logSystemInfo(cmd)
+  os (args) {
+    logSystemInfo(...args)
   }
 
   hash (args) {

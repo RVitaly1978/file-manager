@@ -22,7 +22,7 @@ const PROGRAM_COMMANDS = {
   [CMD.cat]: ['cat'],
   [CMD.add]: ['add'],
   [CMD.rn]: ['rn', 'rename'],
-  [CMD.cp]: ['cp', 'copyfile'],
+  [CMD.cp]: ['cp', 'copy'],
   [CMD.mv]: ['mv', 'move'],
   [CMD.rm]: ['rm', 'remove'],
   [CMD.os]: ['os', 'system'],
