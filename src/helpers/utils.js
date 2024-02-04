@@ -1,4 +1,4 @@
-import { getCommand } from './commands.js'
+import { getProgramCommand } from './commands.js'
 import { getUsername } from '../modules/index.js'
 
 export const getSessionUsername = () => {
@@ -24,7 +24,7 @@ export const parseRawInput = (input = '') => {
   if (!input) { return ['', []] }
 
   const [rawCommand, ...rawArgs] = input.trim().split(' ')
-  const command = getCommand(rawCommand)
+  const command = getProgramCommand(rawCommand)
 
   if (!rawArgs.length) { return [command, []] }
 

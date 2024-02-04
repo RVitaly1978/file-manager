@@ -1,16 +1,16 @@
-import { blue, INVALID_ARGUMENTS_NUMBER, INVALID_FILE_NAME, UNKNOWN_COMMAND, NO_ARGUMENT, INVALID_ARGUMENTS } from './log.js'
+import { blue, MSG } from './log.js'
 import { CMD, osAvailableCommands, getOsCommand } from './commands.js'
 
 const validateArgsLength = (args, length = 0) => {
   if (args.length === length) { return true }
-  if (!args.length) { return NO_ARGUMENT}
-  return [INVALID_ARGUMENTS_NUMBER, args.map(blue).join(', ')].join(': ')
+  if (!args.length) { return MSG.noArgument}
+  return [MSG.invalidArgsNumber, args.map(blue).join(', ')].join(': ')
 }
 
 const maybeDirRegexp = /\/|\\/g
 const validateIsFilename = (filename) => {
   if (!maybeDirRegexp.test(filename)) { return true }
-  return `${INVALID_FILE_NAME}: ${blue(filename)}`
+  return `${MSG.invalidFilename}: ${blue(filename)}`
 }
 
 const OS_CMDs = `Available arguments: ${
@@ -22,8 +22,8 @@ const OS_CMDs = `Available arguments: ${
 const validateOsCommand = (args) => {
   const [cmd, ...extra] = args
   if (getOsCommand(cmd) && !extra.length) { return true }
-  if (!cmd) { return [NO_ARGUMENT, OS_CMDs].join('. ')}
-  return [INVALID_ARGUMENTS, OS_CMDs].join('. ')
+  if (!cmd) { return [MSG.noArgument, OS_CMDs].join('. ')}
+  return [MSG.invalidArgs, OS_CMDs].join('. ')
 }
 
 export const validate = (command, args) => {
@@ -61,6 +61,6 @@ export const validate = (command, args) => {
       return true
 
     default:
-      return `${UNKNOWN_COMMAND}: ${blue(command)}`
+      return `${MSG.unknownCommand}: ${blue(command)}`
   }
 }

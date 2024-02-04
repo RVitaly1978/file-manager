@@ -1,7 +1,10 @@
 import { createInterface } from 'node:readline'
-
-import * as h from './helpers/index.js'
-import * as m from './modules/index.js'
+import { logGreeting, logGoodbye, logCWD, parseRawInput, validate, MSG } from './helpers/index.js'
+import {
+  changeDirUp, changeDir, listDir, // nwd
+  readFile, addFile, // fs
+  logSystemInfo, // os
+} from './modules/index.js'
 
 export class App {
   constructor (sessionUserName, startDirectory) {
@@ -11,40 +14,40 @@ export class App {
   }
 
   greeting () {
-    h.logGreeting(this.sessionUserName)
+    logGreeting(this.sessionUserName)
   }
 
   goodbye () {
-    h.logGoodbye(this.sessionUserName)
+    logGoodbye(this.sessionUserName)
   }
 
-  logCWD () {
-    h.logCurrentWorkingDirectory(this._cwd)
+  displayCWD () {
+    logCWD(this._cwd)
   }
 
   displayPrompt () {
-    this.logCWD()
+    this.displayCWD()
     this._rl.prompt()
   }
 
   up () {
-    this._cwd = m.up(this._cwd)
+    this._cwd = changeDirUp(this._cwd)
   }
 
   async cd ([pathTo]) {
-    this._cwd = await m.cd(this._cwd, pathTo)
+    this._cwd = await changeDir(this._cwd, pathTo)
   }
 
   async ls () {
-    await m.list(this._cwd)
+    await listDir(this._cwd)
   }
 
-  cat (args) {
-    console.log('--cat--', args)
+  async cat ([pathToFile]) {
+    await readFile(this._cwd, pathToFile)
   }
 
-  add (args) {
-    console.log('--add--', args)
+  async add ([filename]) {
+    await addFile(this._cwd, filename)
   }
 
   rn (args) {
@@ -64,7 +67,7 @@ export class App {
   }
 
   os ([cmd]) {
-    m.logSystemInfo(cmd)
+    logSystemInfo(cmd)
   }
 
   hash (args) {
@@ -84,25 +87,31 @@ export class App {
   }
 
   parseInput (line) {
-    return h.parseRawInput(line)
+    return parseRawInput(line)
   }
 
   validateInput (command, args) {
-    const res = h.validate(command, args)
+    const res = validate(command, args)
     return res === true
       ? { value: true, message: '' }
-      : { value: false, message: res }
+      : { value: false, message: [MSG.invalidInput, res].join('. ') }
   }
 
   repl () {
     this._rl = createInterface({
       input: process.stdin,
       output: process.stdout,
-      prompt: h.PROMPT_MSG,
+      prompt: MSG.terminalPrompt,
     })
 
     this._rl.on('line', async (line) => {
       const [command, args] = this.parseInput(line)
+
+      if (!command) {
+        this._rl.prompt()
+        return
+      }
+
       const validation = this.validateInput(command, args)
 
       if (validation.value) {

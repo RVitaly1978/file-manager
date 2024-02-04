@@ -1,24 +1,22 @@
 import { readdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
+import { blue, isDirectory, OperationError } from '../helpers/index.js'
 
-import * as h from '../helpers/index.js'
-
-export const up = (cwd) => {
+export const changeDirUp = (cwd) => {
   return resolve(cwd, '..')
 }
 
-export const cd = async (cwd, pathTo) => {
+export const changeDir = async (cwd, pathTo) => {
   try {
     const path = resolve(cwd, pathTo)
-    const isDirectory = await h.isDirectory(path)
-    if (!isDirectory) { throw new Error() }
+    if (!(await isDirectory(path))) { throw new Error() }
     return path
   } catch {
-    throw new h.OperationError(`The entered path ${h.blue(pathTo)} is not valid`)
+    throw new OperationError(`The entered path ${blue(pathTo)} is not valid`)
   }
 }
 
-export const list = async (cwd) => {
+export const listDir = async (cwd) => {
   try {
     const items = await readdir(cwd, { withFileTypes: true })
 
@@ -37,6 +35,6 @@ export const list = async (cwd) => {
     const list = [...dirs, ...files, ...links]
     console.table(list)
   } catch {
-    throw new h.OperationError()
+    throw new OperationError()
   }
 }

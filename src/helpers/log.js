@@ -1,4 +1,4 @@
-const c = {
+const ansiCodes = {
   green: '\x1b[32m',
   red: '\x1b[31m',
   blue: '\x1b[34m',
@@ -8,14 +8,12 @@ const c = {
   end: '\x1b[0m',
 }
 
-export const green = (str) => `${c.green}${str}${c.end}`
-export const red = (str) => `${c.red}${str}${c.end}`
-export const blue = (str) => `${c.blue}${str}${c.end}`
-export const yellow = (str) => `${c.yellow}${str}${c.end}`
-export const lGreen = (str) => `${c.lightGreen}${str}${c.end}`
-export const lBlue = (str) => `${c.lightBlue}${str}${c.end}`
-
-export const PROMPT_MSG = `${lBlue('>')} `
+export const green = (str) => `${ansiCodes.green}${str}${ansiCodes.end}`
+export const red = (str) => `${ansiCodes.red}${str}${ansiCodes.end}`
+export const blue = (str) => `${ansiCodes.blue}${str}${ansiCodes.end}`
+export const yellow = (str) => `${ansiCodes.yellow}${str}${ansiCodes.end}`
+export const lGreen = (str) => `${ansiCodes.lightGreen}${str}${ansiCodes.end}`
+export const lBlue = (str) => `${ansiCodes.lightBlue}${str}${ansiCodes.end}`
 
 export const logGreeting = (username) => {
   console.log(`Welcome to the File Manager, ${green(username)}!`)
@@ -25,15 +23,18 @@ export const logGoodbye = (username) => {
   console.log(`Thank you for using File Manager, ${green(username)}, goodbye!`)
 }
 
-export const logCurrentWorkingDirectory = (path) => {
+export const logCWD = (path) => {
   console.log(`You are currently in ${yellow(path)}`)
 }
 
-export const OPERATION_SUCCESSFUL = 'Operation completed successfully'
-export const INVALID_INPUT = 'Invalid input'
-export const OPERATION_FAILED = 'Operation failed'
-export const INVALID_ARGUMENTS_NUMBER = 'Received invalid number of arguments'
-export const INVALID_FILE_NAME = 'Received invalid file name'
-export const UNKNOWN_COMMAND = 'Unknown command entered'
-export const NO_ARGUMENT = 'No argument received'
-export const INVALID_ARGUMENTS = 'Received invalid arguments'
+export const MSG = {
+  terminalPrompt: `${lBlue('>')} `,
+  operationSuccessful: 'Operation completed successfully',
+  invalidInput: 'Invalid input',
+  operationFailed: 'Operation failed',
+  invalidArgsNumber: 'Received invalid number of arguments',
+  invalidFilename: 'Received invalid file name',
+  unknownCommand: 'Unknown command entered',
+  noArgument: 'No argument received',
+  invalidArgs: 'Received invalid arguments',
+}

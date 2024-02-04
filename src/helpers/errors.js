@@ -1,4 +1,4 @@
-import { OPERATION_FAILED } from './log.js'
+import { MSG } from './log.js'
 
 class BaseError extends Error {
   constructor (description, name) {
@@ -10,7 +10,7 @@ class BaseError extends Error {
 }
 
 export class OperationError extends BaseError {
-  constructor(description, name = OPERATION_FAILED) {
-    super([OPERATION_FAILED, description].join('. '), name)
+  constructor(description, name = MSG.operationFailed) {
+    super([MSG.operationFailed, description].join('. '), name)
   }
 }

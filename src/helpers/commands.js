@@ -15,7 +15,7 @@ export const CMD = {
   exit: 'exit',
 }
 
-export const COMMANDS = {
+const PROGRAM_COMMANDS = {
   [CMD.up]: ['up'],
   [CMD.cd]: ['cd'],
   [CMD.ls]: ['ls', 'list'],
@@ -32,11 +32,11 @@ export const COMMANDS = {
   [CMD.exit]: ['.exit', '.e', '.q'],
 }
 
-const commands = Object.entries(COMMANDS)
+const programCommands = Object.entries(PROGRAM_COMMANDS)
 
-export const getCommand = (cmd = '') => {
+export const getProgramCommand = (cmd = '') => {
   const cmdToLowerCase = cmd?.toLowerCase?.() || ''
-  return commands.find(([_, values]) => values.includes(cmdToLowerCase))?.[0] || cmd
+  return programCommands.find(([_, values]) => values.includes(cmdToLowerCase))?.[0] || cmd
 }
 
 export const OS_COMMANDS = {
