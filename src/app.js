@@ -3,6 +3,7 @@ import { logGreeting, logGoodbye, logCWD, parseRawInput, validate, MSG } from '.
 import {
   changeDirUp, changeDir, listDir, // nwd
   readFile, addFile, renameFile, removeFile, copyFile, moveFile, // fs
+  logHash, // crypto
   logSystemInfo, // os
 } from './modules/index.js'
 
@@ -70,8 +71,8 @@ export class App {
     logSystemInfo(...args)
   }
 
-  hash (args) {
-    console.log('--hash--', args)
+  async hash (args) {
+    await logHash(this._cwd, ...args)
   }
 
   compress (args) {

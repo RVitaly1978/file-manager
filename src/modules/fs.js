@@ -63,14 +63,8 @@ export const readFile = async (cwd, path) => {
   try {
     const filePath = resolve(cwd, path)
     const readable = createReadStream(filePath, 'utf8')
-    readable.pipe(process.stdout)
-    return new Promise((res, rej) => {
-      readable.on('end', () => {
-        process.stdout.write(EOL)
-        res()
-      })
-      readable.on('error', () => rej())
-    })
+    await pipeline(readable, process.stdout, { end: false })
+    process.stdout.write(EOL)
   } catch {
     throw new OperationError(`The entered file path ${blue(path)} is not valid`)
   }
