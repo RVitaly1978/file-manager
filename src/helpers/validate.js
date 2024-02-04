@@ -27,7 +27,7 @@ const validateOsCommand = (args) => {
 }
 
 export const validate = (command, args) => {
-  let argLengthValidation
+  let argsLengthValidation
 
   switch (command) {
     case CMD.up:
@@ -50,12 +50,12 @@ export const validate = (command, args) => {
       return validateOsCommand(args)
 
     case CMD.add:
-      argLengthValidation = validateArgsLength(args, 1)
-      return argLengthValidation !== true ? argLengthValidation : validateIsFilename(args[0])
+      argsLengthValidation = validateArgsLength(args, 1)
+      return argsLengthValidation !== true ? argsLengthValidation : validateIsFilename(args[0])
 
     case CMD.rn:
-      argLengthValidation = validateArgsLength(args, 2)
-      return argLengthValidation !== true ? argLengthValidation : validateIsFilename(args[1])
+      argsLengthValidation = validateArgsLength(args, 2)
+      return argsLengthValidation !== true ? argsLengthValidation : validateIsFilename(args[1])
 
     case CMD.exit:
       return true

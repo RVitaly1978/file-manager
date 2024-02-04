@@ -1,7 +1,8 @@
 import { createInterface } from 'node:readline'
-import { logGreeting, logGoodbye, logCWD, parseRawInput, validate, MSG } from './helpers/index.js'
+import { resolve } from 'node:path'
+import { logGreeting, logGoodbye, logCWD, parseRawInput, validate, MSG, getDirFromPath } from './helpers/index.js'
 import {
-  changeDirUp, changeDir, listDir, // nwd
+  changeDir, listDir, // nwd
   readFile, addFile, renameFile, removeFile, copyFile, moveFile, // fs
   logHash, // crypto
   compressBrotli, decompressBrotli, // zlib
@@ -13,6 +14,10 @@ export class App {
     this.sessionUserName = sessionUserName
     this._cwd = startDirectory
     this._rl = undefined
+  }
+
+  _resolvePath (path) {
+    return resolve(this._cwd, path)
   }
 
   greeting () {
@@ -33,63 +38,75 @@ export class App {
   }
 
   up () {
-    this._cwd = changeDirUp(this._cwd)
+    this._cwd = this._resolvePath('..')
   }
 
-  async cd (args) {
-    this._cwd = await changeDir(this._cwd, ...args)
+  async cd ([pathTo]) {
+    const path = this._resolvePath(pathTo)
+    this._cwd = await changeDir(path)
   }
 
   async ls () {
     await listDir(this._cwd)
   }
 
-  async cat (args) {
-    await readFile(this._cwd, ...args)
+  async cat ([pathToFile]) {
+    const path = this._resolvePath(pathToFile)
+    await readFile(path)
   }
 
-  async add (args) {
-    await addFile(this._cwd, ...args)
+  async add ([filename]) {
+    const path = this._resolvePath(filename)
+    await addFile(path)
   }
 
-  async rn (args) {
-    await renameFile(this._cwd, ...args)
+  async rn ([pathToFile, newFilename]) {
+    const srcPath = this._resolvePath(pathToFile)
+    const dirPath = getDirFromPath(srcPath)
+    const destPath = resolve(dirPath, newFilename)
+    await renameFile(srcPath, destPath)
   }
 
-  async cp (args) {
-    await copyFile(this._cwd, ...args)
+  async cp ([pathToFile, pathToNewDir]) {
+    const src = this._resolvePath(pathToFile)
+    const dest = this._resolvePath(pathToNewDir)
+    await copyFile(src, dest)
   }
 
-  async mv (args) {
-    await moveFile(this._cwd, ...args)
+  async mv ([pathToFile, pathToNewDir]) {
+    const src = this._resolvePath(pathToFile)
+    const dest = this._resolvePath(pathToNewDir)
+    await moveFile(src, dest)
   }
 
-  async rm (args) {
-    await removeFile(this._cwd, ...args)
+  async rm ([pathToFile]) {
+    const src = this._resolvePath(pathToFile)
+    await removeFile(src)
   }
 
   os (args) {
     logSystemInfo(...args)
   }
 
-  async hash (args) {
-    await logHash(this._cwd, ...args)
+  async hash ([pathToFile]) {
+    const src = this._resolvePath(pathToFile)
+    await logHash(src)
   }
 
-  async compress (args) {
-    await compressBrotli(this._cwd, ...args)
+  async compress ([pathToFile, pathToDest]) {
+    const src = this._resolvePath(pathToFile)
+    const dest = this._resolvePath(pathToDest)
+    await compressBrotli(src, dest)
   }
 
-  async decompress (args) {
-    await decompressBrotli(this._cwd, ...args)
+  async decompress ([pathToFile, pathToDest]) {
+    const src = this._resolvePath(pathToFile)
+    const dest = this._resolvePath(pathToDest)
+    await decompressBrotli(src, dest)
   }
 
   exit () {
     this._rl.close()
-  }
-
-  parseInput (line) {
-    return parseRawInput(line)
   }
 
   validateInput (command, args) {
@@ -107,7 +124,7 @@ export class App {
     })
 
     this._rl.on('line', async (line) => {
-      const [command, args] = this.parseInput(line)
+      const [command, args] = parseRawInput(line)
 
       if (!command) {
         this._rl.prompt()

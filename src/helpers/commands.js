@@ -24,8 +24,8 @@ const PROGRAM_COMMANDS = {
   [CMD.rn]: ['rn', 'rename'],
   [CMD.cp]: ['cp', 'copy'],
   [CMD.mv]: ['mv', 'move'],
-  [CMD.rm]: ['rm', 'remove'],
-  [CMD.os]: ['os', 'system'],
+  [CMD.rm]: ['rm', 'remove', 'del', 'delete'],
+  [CMD.os]: ['os', 'system', 'sys'],
   [CMD.hash]: ['hash'],
   [CMD.compress]: ['compress', 'zip'],
   [CMD.decompress]: ['decompress', 'unzip'],
@@ -40,17 +40,18 @@ export const getProgramCommand = (cmd = '') => {
 }
 
 export const OS_COMMANDS = {
-  eol: ['--eol'],
-  cpus: ['--cpus'],
-  homedir: ['--homedir'],
-  username: ['--username'],
-  architecture: ['--architecture', '--arch'],
+  eol: ['--eol', '--e'],
+  cpus: ['--cpus', '--c'],
+  homedir: ['--homedir', '--h'],
+  username: ['--username', '-u'],
+  architecture: ['--architecture', '--a'],
 }
 
 const osCommands = Object.entries(OS_COMMANDS)
-export const osAvailableCommands = Object.values(OS_COMMANDS)
 
 export const getOsCommand = (cmd = '') => {
   const cmdToLowerCase = cmd?.toLowerCase?.() || ''
   return osCommands.find(([_, values]) => values.includes(cmdToLowerCase))?.[0] || undefined
 }
+
+export const osAvailableCommands = Object.values(OS_COMMANDS)

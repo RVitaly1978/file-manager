@@ -1,18 +1,12 @@
 import { readdir } from 'node:fs/promises'
-import { resolve } from 'node:path'
-import { blue, isDirectory, OperationError } from '../helpers/index.js'
+import { blue, isExistAndDirectory, OperationError } from '../helpers/index.js'
 
-export const changeDirUp = (cwd) => {
-  return resolve(cwd, '..')
-}
-
-export const changeDir = async (cwd, pathTo) => {
+export const changeDir = async (path) => {
   try {
-    const path = resolve(cwd, pathTo)
-    if (!(await isDirectory(path))) { throw new Error() }
+    if (!(await isExistAndDirectory(path))) { throw new Error() }
     return path
   } catch {
-    throw new OperationError(`The entered path ${blue(pathTo)} is not valid`)
+    throw new OperationError(`The entered path ${blue(path)} is not valid`)
   }
 }
 
@@ -32,8 +26,7 @@ export const listDir = async (cwd) => {
       .map(item => ({ Name: item.name, Type: 'symbolic link' }))
       .sort((a, b) => a.Name.localeCompare(b.Name))
 
-    const list = [...dirs, ...files, ...links]
-    console.table(list)
+    console.table([...dirs, ...files, ...links])
   } catch {
     throw new OperationError()
   }

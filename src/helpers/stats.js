@@ -6,14 +6,20 @@ export const getBaseFromPath = (path) => parse(path).base
 export const getNameFromPath = (path) => parse(path).name
 export const getExtFromPath = (path) => parse(path).ext
 
-export const isDirectory = async (path) => {
-  const stats = await stat(path)
-  return stats.isDirectory()
+export const isExistAndDirectory = async (path) => {
+  try {
+    return (await stat(path)).isDirectory()
+  } catch {
+    return false
+  }
 }
 
-export const isFile = async (path) => {
-  const stats = await stat(path)
-  return stats.isFile()
+export const isExistAndFile = async (path) => {
+  try {
+    return (await stat(path)).isFile()
+  } catch {
+    return false
+  }
 }
 
 export const checkIsPathExist = async (path) => {

@@ -3,94 +3,86 @@ import { createReadStream, createWriteStream } from 'node:fs'
 import { writeFile, rename, rm } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { EOL } from 'node:os'
-import { blue, OperationError, MSG, getDirFromPath, checkIsPathExist, getBaseFromPath } from '../helpers/index.js'
+import {
+  blue, OperationError, MSG, getDirFromPath, checkIsPathExist, getBaseFromPath, isExistAndFile, isExistAndDirectory,
+} from '../helpers/index.js'
 
-const copyFileWithoutLog = async (cwd, pathToFile, pathToNewDir) => {
-  const srcPath = resolve(cwd, pathToFile)
-  const newDirPath = resolve(cwd, pathToNewDir)
-  const base = getBaseFromPath(srcPath)
-  const destPath = resolve(cwd, pathToNewDir, base)
-  if (!(await checkIsPathExist(srcPath))) {
-    throw new Error(`The entered path to file ${blue(srcPath)} doesn't exist`)
+const copyFileSilently = async (src, destDir) => {
+  if (!(await isExistAndFile(src))) { throw new Error(`The entered path ${blue(src)} doesn't exist or is not a file`) }
+  if (!(await isExistAndDirectory(destDir))) { throw new Error(`The destination directory path ${blue(destDir)} doesn't exist or is not a directory`) }
+  const base = getBaseFromPath(src)
+  const dest = resolve(destDir, base)
+  if (await isExistAndFile(dest)) { throw new Error(`File with name ${blue(base)} already exists in the directory ${blue(destDir)}`) }
+  try {
+    await pipeline(createReadStream(src), createWriteStream(dest, { flags: 'wx' }))
+  } catch (err) {
+    throw new Error(err.message)
   }
-  if (!(await checkIsPathExist(newDirPath))) {
-    throw new Error(`The entered path ${blue(newDirPath)} to destination directory doesn't exist`)
-  }
-  if (await checkIsPathExist(destPath)) {
-    throw new Error(`File with name ${blue(base)} already exists in the directory ${blue(newDirPath)}`)
-  }
-  await pipeline(createReadStream(srcPath), createWriteStream(destPath))
 }
 
-const removeFileWithoutLog = async (cwd, pathToFile) => {
-  const path = resolve(cwd, pathToFile)
+const removeFileSilently = async (src) => {
   try {
-    await rm(path)
+    await rm(src)
   } catch {
-    throw new Error(`The entered path to file ${blue(path)} is not valid`)
+    throw new Error(`The entered path to file ${blue(src)} is not valid`)
   }
 }
 
-export const copyFile = async (cwd, pathToFile, pathToNewDir) => {
+export const copyFile = async (src, dest) => {
   try {
-    await copyFileWithoutLog(cwd, pathToFile, pathToNewDir)
+    await copyFileSilently(src, dest)
     console.log(MSG.operationSuccessful)
   } catch (err) {
     throw new OperationError(err.message)
   }
 }
 
-export const moveFile = async (cwd, pathToFile, pathToNewDir) => {
+export const moveFile = async (src, dest) => {
   try {
-    await copyFileWithoutLog(cwd, pathToFile, pathToNewDir)
-    await removeFileWithoutLog(cwd, pathToFile)
+    await copyFileSilently(src, dest)
+    await removeFileSilently(src)
     console.log(MSG.operationSuccessful)
   } catch (err) {
     throw new OperationError(err.message)
   }
 }
 
-export const removeFile = async (cwd, pathToFile) => {
+export const removeFile = async (src) => {
   try {
-    await removeFileWithoutLog(cwd, pathToFile)
+    await removeFileSilently(src)
     console.log(MSG.operationSuccessful)
   } catch (err) {
     throw new OperationError(err.message)
   }
 }
 
-export const readFile = async (cwd, path) => {
+export const readFile = async (src) => {
   try {
-    const filePath = resolve(cwd, path)
-    const readable = createReadStream(filePath, 'utf8')
+    const readable = createReadStream(src, 'utf8')
     await pipeline(readable, process.stdout, { end: false })
     process.stdout.write(EOL)
   } catch {
-    throw new OperationError(`The entered file path ${blue(path)} is not valid`)
+    throw new OperationError(`The entered file path ${blue(src)} is not valid`)
   }
 }
 
-export const addFile = async (cwd, filename) => {
+export const addFile = async (src) => {
   try {
-    const filePath = resolve(cwd, filename)
-    await writeFile(filePath, '', { flag: 'wx' })
+    await writeFile(src, '', { flag: 'wx' })
     console.log(MSG.operationSuccessful)
   } catch {
-    throw new OperationError(`The entered file name ${blue(filename)} already exists in the current directory or is not valid`)
+    throw new OperationError(`The entered path ${blue(src)} already exists in the directory ${blue(getDirFromPath(src))}`)
   }
 }
 
-export const renameFile = async (cwd, pathToFile, newFilename) => {
-  const srcPath = resolve(cwd, pathToFile)
-  const dirPath = getDirFromPath(srcPath)
-  const destPath = resolve(dirPath, newFilename)
-  if (await checkIsPathExist(destPath)) {
-    throw new OperationError(`The entered new filename ${blue(newFilename)} already exists in the directory ${blue(dirPath)}`)
+export const renameFile = async (src, dest) => {
+  if (await checkIsPathExist(dest)) {
+    throw new OperationError(`The entered new filename ${blue(getBaseFromPath(dest))} already exists in the directory ${blue(getDirFromPath(dest))}`)
   }
   try {
-    await rename(srcPath, destPath)
+    await rename(src, dest)
     console.log(MSG.operationSuccessful)
   } catch {
-    throw new OperationError(`The entered path to file ${blue(srcPath)} is not valid`)
+    throw new OperationError(`The entered path to file ${blue(src)} is not valid`)
   }
 }
