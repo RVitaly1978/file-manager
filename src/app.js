@@ -4,6 +4,7 @@ import {
   changeDirUp, changeDir, listDir, // nwd
   readFile, addFile, renameFile, removeFile, copyFile, moveFile, // fs
   logHash, // crypto
+  compressBrotli, decompressBrotli, // zlib
   logSystemInfo, // os
 } from './modules/index.js'
 
@@ -75,12 +76,12 @@ export class App {
     await logHash(this._cwd, ...args)
   }
 
-  compress (args) {
-    console.log('--compress--', args)
+  async compress (args) {
+    await compressBrotli(this._cwd, ...args)
   }
 
-  decompress (args) {
-    console.log('--decompress--', args)
+  async decompress (args) {
+    await decompressBrotli(this._cwd, ...args)
   }
 
   exit () {
