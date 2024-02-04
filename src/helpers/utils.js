@@ -23,7 +23,7 @@ const quotesRegex = /[^\s"']+|"([^"]*)"+|'([^']*)'/gmi
 export const parseRawInput = (input = '') => {
   if (!input) { return ['', []] }
 
-  const [rawCommand, ...rawArgs] = input.split(' ')
+  const [rawCommand, ...rawArgs] = input.trim().split(' ')
   const command = getCommand(rawCommand)
 
   if (!rawArgs.length) { return [command, []] }

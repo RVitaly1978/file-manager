@@ -28,3 +28,12 @@ export const logGoodbye = (username) => {
 export const logCurrentWorkingDirectory = (path) => {
   console.log(`You are currently in ${yellow(path)}`)
 }
+
+export const OPERATION_SUCCESSFUL = 'Operation completed successfully'
+export const INVALID_INPUT = 'Invalid input'
+export const OPERATION_FAILED = 'Operation failed'
+export const INVALID_ARGUMENTS_NUMBER = 'Received invalid number of arguments'
+export const INVALID_FILE_NAME = 'Received invalid file name'
+export const UNKNOWN_COMMAND = 'Unknown command entered'
+export const NO_ARGUMENT = 'No argument received'
+export const INVALID_ARGUMENTS = 'Received invalid arguments'

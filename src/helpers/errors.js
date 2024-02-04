@@ -1,3 +1,5 @@
+import { OPERATION_FAILED } from './log.js'
+
 class BaseError extends Error {
   constructor (description, name) {
     super(description)
@@ -7,14 +9,8 @@ class BaseError extends Error {
   }
 }
 
-export class InputError extends BaseError {
-  constructor(description, name = 'Invalid input') {
-    super(['Invalid input', description].join('. '), name)
-  }
-}
-
 export class OperationError extends BaseError {
-  constructor(description, name = 'Operation failed') {
-    super(['Operation failed', description].join('. '), name)
+  constructor(description, name = OPERATION_FAILED) {
+    super([OPERATION_FAILED, description].join('. '), name)
   }
 }
