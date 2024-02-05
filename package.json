@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "start:named": "node src/index.js --username=defaultUser"
+    "start:named": "node src/index.js --username=USER"
   },
   "repository": {
     "type": "git",
