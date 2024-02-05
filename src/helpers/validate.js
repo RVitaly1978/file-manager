@@ -1,3 +1,4 @@
+import { parse } from 'node:path'
 import { blue, MSG } from './log.js'
 import { CMD, osAvailableCommands, getOsCommand } from './commands.js'
 
@@ -7,9 +8,9 @@ const validateArgsLength = (args, length = 0) => {
   return [MSG.invalidArgsNumber, args.map(blue).join(', ')].join(': ')
 }
 
-const maybeDirRegexp = /\/|\\/g
 const validateIsFilename = (filename) => {
-  if (!maybeDirRegexp.test(filename)) { return true }
+  const { root, dir } = parse(filename)
+  if (!root && !dir) { return true }
   return `${MSG.invalidFilename}: ${blue(filename)}`
 }
 

@@ -1,6 +1,6 @@
 import { createInterface } from 'node:readline'
 import { resolve, sep } from 'node:path'
-import { logGreeting, logGoodbye, logCWD, parseRawInput, validate, MSG, getDirFromPath } from './helpers/index.js'
+import { logGreeting, logGoodbye, logCWD, parseRawInput, validate, MSG } from './helpers/index.js'
 import {
   changeDir, listDir, // nwd
   readFile, addFile, renameFile, removeFile, copyFile, moveFile, // fs
@@ -62,9 +62,7 @@ export class App {
 
   async rn ([pathToFile, newFilename]) {
     const srcPath = this._resolvePath(pathToFile)
-    const dirPath = getDirFromPath(srcPath)
-    const destPath = resolve(dirPath, newFilename)
-    await renameFile(srcPath, destPath)
+    await renameFile(srcPath, newFilename)
   }
 
   async cp ([pathToFile, pathToNewDir]) {

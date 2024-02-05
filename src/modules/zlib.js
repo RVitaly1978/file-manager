@@ -1,10 +1,9 @@
+import { rm } from 'node:fs/promises'
 import { createReadStream, createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream/promises'
 import { createBrotliCompress, createBrotliDecompress } from 'node:zlib'
 import { resolve } from 'node:path'
-import {
-  blue, OperationError, MSG, checkIsPathExist, getBaseFromPath, getExtFromPath, getNameFromPath, isExistAndFile,
-} from '../helpers/index.js'
+import { getPathBase, getPathExt, getPathName, cmdLogger, isExistAndFileOrFail, isPathNotExistOrFail } from '../helpers/index.js'
 
 const ACTION = {
   compress: 'COMPRESS',
@@ -12,47 +11,44 @@ const ACTION = {
 }
 
 const getCompressPaths = async (src, destPath) => {
-  if (!(await isExistAndFile(src))) { throw new Error(`The entered path ${blue(src)} doesn't exist or is not a file`) }
-  const destExt = getExtFromPath(destPath)
-  const dest = destExt ? destPath : resolve(destPath, `${getBaseFromPath(src)}.br`)
-  if (await checkIsPathExist(dest)) { throw new Error(`The destination path ${blue(dest)} already exists`) }
+  await isExistAndFileOrFail(src)
+  const destExt = getPathExt(destPath)
+  const dest = destExt ? destPath : resolve(destPath, `${getPathBase(src)}.br`)
+  await isPathNotExistOrFail(dest)
   return { src, dest }
 }
 
 const getDecompressPaths = async (src, destPath) => {
-  if (!(await isExistAndFile(src))) { throw new Error(`The entered path ${blue(src)} doesn't exist or is not a file`) }
-  const destExt = getExtFromPath(destPath)
-  const filename = getExtFromPath(src) === '.br' ? getNameFromPath(src) : getBaseFromPath(src)
+  await isExistAndFileOrFail(src)
+  const destExt = getPathExt(destPath)
+  const filename = getPathExt(src) === '.br' ? getPathName(src) : getPathBase(src)
   const dest = destExt ? destPath : resolve(destPath, filename)
-  if (await checkIsPathExist(dest)) { throw new Error(`The destination path ${blue(dest)} already exists`) }
+  await isPathNotExistOrFail(dest)
   return { src, dest }
 }
 
-const makeBrotli = async (src, dest, action) => {
+const performBrotli = async (src, dest, action) => {
   const brotli = action === ACTION.compress ? createBrotliCompress() : createBrotliDecompress()
   try {
-    await pipeline( createReadStream(src), brotli, createWriteStream(dest, { flags: 'wx' }))
-  } catch {
-    throw new Error()
+    await pipeline(createReadStream(src), brotli, createWriteStream(dest, { flags: 'wx' }))
+  } catch (err) {
+    await rm(dest, { force: true })
+    throw new Error(err.message)
   }
 }
 
-export const compressBrotli = async (srcPath, destPath) => {
-  try {
+export const compressBrotli = cmdLogger(
+  async (srcPath, destPath) => {
     const { src, dest } = await getCompressPaths(srcPath, destPath)
-    await makeBrotli(src, dest, ACTION.compress)
-    console.log(MSG.operationSuccessful)
-  } catch (err) {
-    throw new OperationError(err.message)
-  }
-}
+    await performBrotli(src, dest, ACTION.compress)
+  },
+  true
+)
 
-export const decompressBrotli = async (srcPath, destPath) => {
-  try {
+export const decompressBrotli = cmdLogger(
+  async (srcPath, destPath) => {
     const { src, dest } = await getDecompressPaths(srcPath, destPath)
-    await makeBrotli(src, dest, ACTION.decompress)
-    console.log(MSG.operationSuccessful)
-  } catch (err) {
-    throw new OperationError(err.message)
-  }
-}
+    await performBrotli(src, dest, ACTION.decompress)
+  },
+  true
+)

@@ -1,3 +1,5 @@
+import { OperationError } from './errors.js'
+
 const ansiCodes = {
   green: '\x1b[32m',
   red: '\x1b[31m',
@@ -17,18 +19,6 @@ export const lYellow = (str) => `${ansiCodes.lightYellow}${str}${ansiCodes.end}`
 export const lGreen = (str) => `${ansiCodes.lightGreen}${str}${ansiCodes.end}`
 export const lBlue = (str) => `${ansiCodes.lightBlue}${str}${ansiCodes.end}`
 
-export const logGreeting = (username) => {
-  console.log(`${green('Welcome to the File Manager,')} ${lGreen(username)}${green('!')}`)
-}
-
-export const logGoodbye = (username) => {
-  console.log(`${green('Thank you for using File Manager,')} ${lGreen(username)}${green(', goodbye!')}`)
-}
-
-export const logCWD = (path) => {
-  console.log(`You are currently in ${lYellow(path)}`)
-}
-
 export const MSG = {
   terminalPrompt: `${lBlue('>')} `,
   operationSuccessful: 'Operation completed successfully',
@@ -39,4 +29,27 @@ export const MSG = {
   unknownCommand: 'Unknown command entered',
   noArgument: 'No argument received',
   invalidArgs: 'Received invalid arguments',
+}
+
+export const logGreeting = (username) => {
+  console.log(`${green('Welcome to the File Manager,')} ${lGreen(username)}${green('!')}`)
+}
+
+export const logGoodbye = (username) => {
+  console.log(`${green('Thank you for using File Manager,')} ${lGreen(username)}${green(', goodbye!')}`)
+}
+
+export const logCWD = (path) => {
+  console.log(`You are currently in ${lBlue(path)}`)
+}
+
+export const cmdLogger = (cb, isLogSuccess) => async (...args) => {
+  try {
+    await cb(...args)
+    if (isLogSuccess) {
+      console.log(MSG.operationSuccessful)
+    }
+  } catch (err) {
+    throw new OperationError(err.message)
+  }
 }

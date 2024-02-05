@@ -9,6 +9,6 @@ export const logHash = async (src) => {
     await pipeline(createReadStream(src), hash)
     console.log(`Hash of file ${yellow(src)} is ${yellow(hash.digest('hex'))}`)
   } catch {
-    throw new OperationError(`The entered file path ${blue(src)} is not valid`)
+    throw new OperationError(`The source file path ${blue(src)} is not valid`)
   }
 }

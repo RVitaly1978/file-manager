@@ -43,7 +43,7 @@ export const OS_COMMANDS = {
   eol: ['--eol', '--e'],
   cpus: ['--cpus', '--c'],
   homedir: ['--homedir', '--h'],
-  username: ['--username', '-u'],
+  username: ['--username', '--u'],
   architecture: ['--architecture', '--a'],
 }
 
