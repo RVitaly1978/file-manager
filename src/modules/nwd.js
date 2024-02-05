@@ -10,21 +10,30 @@ export const changeDir = async (path) => {
   }
 }
 
+const safeCheck = (cb) => {
+  try {
+    cb()
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const listDir = async (cwd) => {
   try {
     const items = await readdir(cwd, { withFileTypes: true })
 
-    const dirs = items.filter(item => item.isDirectory())
+    const availableItems = items.filter(item => safeCheck(() => item.isDirectory()))
+      .sort((a, b) => a.name.localeCompare(b.name))
+
+    const dirs = availableItems.filter(item => item.isDirectory())
       .map(item => ({ Name: item.name, Type: 'directory' }))
-      .sort((a, b) => a.Name.localeCompare(b.Name))
 
-    const files = items.filter(item => item.isFile())
+    const files = availableItems.filter(item => item.isFile())
       .map(item => ({ Name: item.name, Type: 'file' }))
-      .sort((a, b) => a.Name.localeCompare(b.Name))
 
-    const links = items.filter(item => item.isSymbolicLink())
+    const links = availableItems.filter(item => item.isSymbolicLink())
       .map(item => ({ Name: item.name, Type: 'symbolic link' }))
-      .sort((a, b) => a.Name.localeCompare(b.Name))
 
     console.table([...dirs, ...files, ...links])
   } catch (err) {
