@@ -1,5 +1,5 @@
 import { createInterface } from 'node:readline'
-import { resolve } from 'node:path'
+import { resolve, sep } from 'node:path'
 import { logGreeting, logGoodbye, logCWD, parseRawInput, validate, MSG, getDirFromPath } from './helpers/index.js'
 import {
   changeDir, listDir, // nwd
@@ -42,7 +42,7 @@ export class App {
   }
 
   async cd ([pathTo]) {
-    const path = this._resolvePath(pathTo)
+    const path = this._resolvePath(pathTo + sep)
     this._cwd = await changeDir(path)
   }
 
